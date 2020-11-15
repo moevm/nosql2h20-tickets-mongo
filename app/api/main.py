@@ -1,7 +1,8 @@
-import pymongo
 
-client = pymongo.MongoClient("mongodb://db:27017/")
-db = client.example
-db.example.insert({"name":"Hello World!"})
-for db in client.list_databases():
-    print(db)
+import pymongo
+from backend import backend
+
+
+backend.add_new_user("ddd","ddd","ddd","ddd","ddd")
+backend.add_new_ticket("pes")
+backend.add_new_trip("ddd", "ddd", "ddd", "ddd", "pes", "ddd", "ddd", "pes")
