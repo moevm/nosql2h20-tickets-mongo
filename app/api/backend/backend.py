@@ -14,9 +14,26 @@ def add_new_trip(from_, to, depar_date, arrival_date, transport_id, distance, pr
                      "price": price}])
 
 
+def get_cities():
+    cities = []
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trips = db.trip.find({})
+    for x in trips:
+        cities.append(x.get('from'))
+        cities.append(x.get('to'))
+    return set(cities)
+
+
 def find_trip(from_, to, depar_date, name):
     db = pymongo.MongoClient("mongodb://db:27017/").example
-    return list(db.trip.find({"depar_date": {"$gte": depar_date}, "from": from_, "to": to}))
+    trips = db.trip.find({"depar_date": {"$gte": depar_date}, "from": from_, "to": to})
+    mas1 = db.trip.find({"depar_date": {"$gte": depar_date}, "from": from_})
+    mas2 = list()
+    for x in mas1:
+        e = list(db.trip.find({"from": x.get('to'), "to": to}))
+        if len(e):
+            mas2.append([x, e])
+    return [trips, mas2]
 
 
 def get_ticket_type_id(name):
