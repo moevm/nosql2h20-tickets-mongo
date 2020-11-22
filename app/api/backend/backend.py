@@ -3,7 +3,12 @@ import pymongo
 
 def add_new_user(email, pass_, ph_num, fio, passp):
     db = pymongo.MongoClient("mongodb://db:27017/").example
-    db.user.insert([{"email": email,
+    e = list(db.user.find_one({"email": email}))
+    p = list(db.user.find_one({"password": pass_}))
+    if len(e) > 0 or len(p) > 0:
+        return "user has already exist"
+    else:
+        db.user.insert([{"email": email,
                      "password": pass_, "phone_num": ph_num, "fio": fio, "passport": passp, "tickets": []}])
 
 
@@ -12,6 +17,12 @@ def add_new_trip(from_, to, depar_date, arrival_date, transport_id, distance, pr
     db.trip.insert([{"from": from_, "to": to, "depar_date": depar_date, "arrival_date": arrival_date,
                      "transport_id": transport_id, "ticket_id": get_ticket_type_id(name), "distance": distance,
                      "price": price}])
+
+
+def autorisation(email, password):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    u = list(db.user.find_one({"email": email, 'password': password}))
+    return len(u) > 0
 
 
 def get_cities():
