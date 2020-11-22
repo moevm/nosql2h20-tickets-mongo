@@ -1,4 +1,5 @@
 import pymongo
+import datetime
 
 
 def add_new_user(email, pass_, ph_num, fio, passp):
@@ -43,7 +44,8 @@ def find_trip(from_, to, depar_date, name):
     for x in mas1:
         e = list(db.trip.find({"from": x.get('to'), "to": to}))
         if len(e):
-            mas2.append([x, e])
+            if(e[0]['depar_date'] > x.get('arrival_date')):
+                mas2.append([x, e])
     return [trips, mas2]
 
 
