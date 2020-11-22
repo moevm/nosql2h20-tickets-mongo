@@ -1,5 +1,6 @@
 import pymongo
 from backend import backend
+from frontend import frontend
 import datetime
 
 
@@ -10,3 +11,4 @@ backend.add_new_trip("ddd", "ddd", d, "ddd", "pes", "ddd", "ddd", "pes")
 
 print(backend.find_trip("ddd", "ddd", d, "pes"))
 
+frontend.start()
