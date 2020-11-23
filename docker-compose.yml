@@ -12,7 +12,10 @@ services:
     ports:
     - "8080:8080"
     environment:
-    - QT_QPA_PLATFORM=linuxfb
+    - DISPLAY=$DISPLAY
+
+   # - QT_QPA_PLATFORM=linuxfb
+  #      - QT_LOGGING_RULES='.debug=false;qt.qpa.=false'
     volumes:
     - /tmp/.X11-unix:/tmp/.X11-unix
     privileged: true
