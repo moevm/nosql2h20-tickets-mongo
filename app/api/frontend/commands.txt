@@ -1,0 +1,7 @@
+cd ./api/frontend
+
+pyuic5 -x ./gui_xml/main_window.ui -o ./gui_py/main_window.py
+pyuic5 -x ./gui_xml/main_window_admin.ui -o ./gui_py/main_window_admin.py
+pyuic5 -x ./gui_xml/flights.ui -o ./gui_py/flights_window.py
+pyuic5 -x ./gui_xml/authorization_window.ui -o ./gui_py/authorization_window.py
+pyuic5 -x ./gui_xml/registration_window.ui -o ./gui_py/registration_window.py
