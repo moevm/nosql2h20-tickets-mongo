@@ -19,7 +19,7 @@ services:
     - /tmp/.X11-unix:/tmp/.X11-unix
     privileged: true
   db:
-    image: arm64v8/mongo:4-xenial
+    image: mongo
     container_name: db
     ports:
       - "27017:27017"
