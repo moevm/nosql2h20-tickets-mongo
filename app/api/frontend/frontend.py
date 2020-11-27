@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-import sys
+import sys, os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from backend.backend import *
 from frontend.gui_py.main_window import Ui_Dialog as main_window
@@ -11,6 +11,7 @@ from frontend.gui_py.registration_window import Ui_Dialog as registration_window
 
 
 dependent_windows = {}
+user_data = [None, None]
 
 
 class MAINWIN:
@@ -47,9 +48,14 @@ def authorization_button():
 
     auth_ui.reg.clicked.connect(register_button)
     auth_ui.login.clicked.connect(login_button)
+    auth_ui.logout.clicked.connect(logout_button)
 
     dependent_windows['authorization'] = [auth_dialog, auth_ui]
     auth_dialog.show()
+
+
+def project_link_button():
+    os.system('start https://github.com/moevm/nosql2h20-tickets-mongo')
 
 
 # Обработчики эл-в гл. окна (user)
@@ -73,8 +79,7 @@ def register_button():
     reg_ui = registration_window()
     reg_ui.setupUi(reg_dialog)
 
-    reg_ui.admin.clicked.connect(admin_button)
-    reg_ui.user.clicked.connect(user_button)
+    reg_ui.registration.clicked.connect(registration_button)
 
     dependent_windows['registration'] = [reg_dialog, reg_ui]
     reg_dialog.show()
@@ -84,21 +89,34 @@ def login_button():
     if dependent_windows.get('authorization'):
         email = dependent_windows.get('authorization')[1].email_line.text()
         password = dependent_windows.get('authorization')[1].pass_line.text()
-        del dependent_windows['authorization']
-        if dependent_windows.get('registration'): del dependent_windows['registration']
+        if (authorization(email, password)):
+            user_data[0] = email; user_data[1] = password
+            if (email == 'admin' and password == 'admin'): switch_to_admin_page()
+            else: switch_to_user_page()
+            del dependent_windows['authorization']
+            if dependent_windows.get('registration'): del dependent_windows['registration']
+
+
+def logout_button():
+    switch_to_user_page()
+    user_data[0] = None; user_data[1] = None
+    if dependent_windows.get('authorization'): del dependent_windows['authorization']
+    if dependent_windows.get('registration'): del dependent_windows['registration']
 
 
 # Обработчики эл-в окна регистрации
-def admin_button():
-    switch_to_admin_page()
-    if dependent_windows.get('authorization'): del dependent_windows['authorization']
-    if dependent_windows.get('registration'): del dependent_windows['registration']
-
-
-def user_button():
+def registration_button():
     switch_to_user_page()
-    if dependent_windows.get('authorization'): del dependent_windows['authorization']
-    if dependent_windows.get('registration'): del dependent_windows['registration']
+    if dependent_windows.get('registration'):
+        email = dependent_windows.get('registration')[1].email_line.text()
+        password = dependent_windows.get('registration')[1].pass_line.text()
+        phone = dependent_windows.get('registration')[1].phone_line.text()
+        name = dependent_windows.get('registration')[1].name_line.text()
+        passport = dependent_windows.get('registration')[1].passp_line.text()
+        if (add_new_user(email, password, phone, name, passport)) != 'user has already exist':
+            user_data[0] = email; user_data[1] = password
+            del dependent_windows['registration']
+            if dependent_windows.get('authorization'): del dependent_windows['authorization']
 
 
 def start():
@@ -110,6 +128,7 @@ def start():
 
     mainwin.main_ui.auth.clicked.connect(authorization_button)
     mainwin.main_ui.search.clicked.connect(search_button)
+    mainwin.main_ui.git.clicked.connect(project_link_button)
 
     mainwin.main_dialog.show()
     sys.exit(app.exec_())

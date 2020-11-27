@@ -20,7 +20,7 @@ def add_new_trip(from_, to, depar_date, arrival_date, transport_id, distance, pr
                      "price": price}])
 
 
-def autorisation(email, password):
+def authorization(email, password):
     db = pymongo.MongoClient("mongodb://db:27017/").example
     u = list(db.user.find_one({"email": email, 'password': password}))
     return len(u) > 0
