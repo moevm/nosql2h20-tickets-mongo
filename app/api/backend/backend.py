@@ -1,28 +1,31 @@
 import pymongo
 import datetime
+import json
+from bson.objectid import ObjectId
 
 
 def add_new_user(email, pass_, ph_num, fio, passp):
     db = pymongo.MongoClient("mongodb://db:27017/").example
-    e = list(db.user.find_one({"email": email}))
-    p = list(db.user.find_one({"password": pass_}))
+    e = list(db.user.find({"email": email}))
+    p = list(db.user.find({"password": pass_}))
     if len(e) > 0 or len(p) > 0:
         return "user has already exist"
     else:
         db.user.insert([{"email": email,
-                     "password": pass_, "phone_num": ph_num, "fio": fio, "passport": passp, "tickets": []}])
+                         "password": pass_, "phone_num": ph_num, "fio": fio, "passport": passp, "tickets": []}])
 
 
-def add_new_trip(from_, to, depar_date, arrival_date, transport_id, distance, price, name):
+def add_new_trip(from_, to, depar_date, arrival_date, tran_name, distance, price, ticket_name):
     db = pymongo.MongoClient("mongodb://db:27017/").example
     db.trip.insert([{"from": from_, "to": to, "depar_date": depar_date, "arrival_date": arrival_date,
-                     "transport_id": transport_id, "ticket_id": get_ticket_type_id(name), "distance": distance,
+                     "transport_id": get_transport_type_id(tran_name), "ticket_id": get_ticket_type_id(ticket_name),
+                     "distance": distance,
                      "price": price}])
 
 
-def authorization(email, password):
+def autorisation(email, password):
     db = pymongo.MongoClient("mongodb://db:27017/").example
-    u = list(db.user.find_one({"email": email, 'password': password}))
+    u = list(db.user.find({"email": email, 'password': password}))
     return len(u) > 0
 
 
@@ -44,7 +47,7 @@ def find_trip(from_, to, depar_date, name):
     for x in mas1:
         e = list(db.trip.find({"from": x.get('to'), "to": to}))
         if len(e):
-            if(e[0]['depar_date'] > x.get('arrival_date')):
+            if (e[0]['depar_date'] > x.get('arrival_date')):
                 mas2.append([x, e])
     return [trips, mas2]
 
@@ -52,6 +55,21 @@ def find_trip(from_, to, depar_date, name):
 def get_ticket_type_id(name):
     db = pymongo.MongoClient("mongodb://db:27017/").example
     return db.ticket.find_one({"name": name}).get('_id')
+
+
+def get_ticket_type_name(id):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    return db.ticket.find_one({'_id': ObjectId(str(id))}).get('name')
+
+
+def get_transport_type_id(name):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    return db.transport.find_one({"name": name}).get('_id')
+
+
+def get_transport_type_name(id):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    return db.transport.find_one({'_id': ObjectId(str(id))}).get('name')
 
 
 def add_trip_to_user(user_id, trip_id):
@@ -67,3 +85,60 @@ def add_new_ticket(name):
 def add_new_transport(name, kind_of_transport, number_of_seats):
     db = pymongo.MongoClient("mongodb://db:27017/").example
     db.transport.insert([{"name": name, "kind_of_transport": kind_of_transport, "number_of_seats": number_of_seats}])
+
+
+def export_trans(outfile):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trans_list = list(db.transport.find({}))
+    for x in trans_list:
+        x.pop('_id')
+    with open(outfile, 'w') as outfile:
+        json.dump(trans_list, outfile)
+
+
+def import_trans(outfile):
+    with open(outfile) as json_file:
+        trans = json.load(json_file)
+        for x in trans:
+            add_new_transport(x['name'], x['kind_of_transport'], x['number_of_seats'])
+
+
+def export_ticket(outfile):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    tickets_list = list(db.ticket.find({}))
+    for x in tickets_list:
+        x.pop('_id')
+    with open(outfile, 'w') as outfile:
+        json.dump(tickets_list, outfile)
+
+
+def import_ticket(outfile):
+    with open(outfile) as json_file:
+        ticket = json.load(json_file)
+        for x in ticket:
+            add_new_ticket(x['name'])
+
+
+def export_trip(outfile):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trip_list = list(db.trip.find({}))
+    for x in trip_list:
+        x.pop('_id')
+        x['transport_name'] = x.pop('transport_id')
+        x["transport_name"] = get_transport_type_name(x['transport_name'])
+        x['ticket_name'] = x.pop('ticket_id')
+        x["ticket_name"] = get_ticket_type_name(x['ticket_name'])
+        x["depar_date"] = x["depar_date"].strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        x["arrival_date"] = x["arrival_date"].strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    with open(outfile, 'w') as outfile:
+        json.dump(trip_list, outfile)
+
+
+def import_trip(outfile):
+    with open(outfile) as json_file:
+        trip_list = json.load(json_file)
+        for x in trip_list:
+            d1 = datetime.datetime.strptime(x['depar_date'], "%Y-%m-%dT%H:%M:%S.000Z")
+            d2 = datetime.datetime.strptime(x['arrival_date'], "%Y-%m-%dT%H:%M:%S.000Z")
+            add_new_trip(x['from'], x['to'], d1, d2, x['transport_name'],
+                         x['distance'],  x['price'], x['ticket_name'])
