@@ -29,7 +29,7 @@ def authorization(email, password):
     return len(u) > 0
 
 
-def get_cities():
+def get_cities_to_find_ticket():
     cities = []
     db = pymongo.MongoClient("mongodb://db:27017/").example
     trips = db.trip.find({})
@@ -37,6 +37,21 @@ def get_cities():
         cities.append(x.get('from'))
         cities.append(x.get('to'))
     return set(cities)
+
+
+def get_cities_to_create_ticket():
+    cities_list = []
+    with open("../data/cities.json") as json_file:
+        cities_list = json.load(json_file)
+    return cities_list
+
+
+def add_citie(citie):
+    cities = get_cities_to_create_ticket()
+    if not citie in cities:
+        cities.append(citie)
+        with open("../data/cities.json", 'w') as outfile:
+            json.dump(cities, outfile)
 
 
 def find_trip(from_, to, depar_date, name):
@@ -141,4 +156,4 @@ def import_trip(outfile):
             d1 = datetime.datetime.strptime(x['depar_date'], "%Y-%m-%dT%H:%M:%S.000Z")
             d2 = datetime.datetime.strptime(x['arrival_date'], "%Y-%m-%dT%H:%M:%S.000Z")
             add_new_trip(x['from'], x['to'], d1, d2, x['transport_name'],
-                         x['distance'],  x['price'], x['ticket_name'])
+                         x['distance'], x['price'], x['ticket_name'])
