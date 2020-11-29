@@ -82,12 +82,9 @@ class Ui_Dialog(object):
         self.passp.setScaledContents(True)
         self.passp.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.passp.setObjectName("passp")
-        self.user = QtWidgets.QPushButton(Dialog)
-        self.user.setGeometry(QtCore.QRect(50, 210, 141, 41))
-        self.user.setObjectName("user")
-        self.admin = QtWidgets.QPushButton(Dialog)
-        self.admin.setGeometry(QtCore.QRect(200, 210, 141, 41))
-        self.admin.setObjectName("admin")
+        self.registration = QtWidgets.QPushButton(Dialog)
+        self.registration.setGeometry(QtCore.QRect(170, 210, 141, 41))
+        self.registration.setObjectName("registration")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -100,8 +97,7 @@ class Ui_Dialog(object):
         self.phone.setText(_translate("Dialog", "Phone number:"))
         self.name.setText(_translate("Dialog", "Full name:"))
         self.passp.setText(_translate("Dialog", "Passport:"))
-        self.user.setText(_translate("Dialog", "User"))
-        self.admin.setText(_translate("Dialog", "Administrator"))
+        self.registration.setText(_translate("Dialog", "Registration"))
 
 
 if __name__ == "__main__":
