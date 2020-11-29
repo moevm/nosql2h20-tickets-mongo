@@ -63,7 +63,7 @@ class Ui_Dialog(object):
         self.email.setText(_translate("Dialog", "E-mail:"))
         self.passw.setText(_translate("Dialog", "Password:"))
         self.login.setText(_translate("Dialog", "Log in"))
-        self.reg.setText(_translate("Dialog", "Register"))
+        self.reg.setText(_translate("Dialog", "Registration"))
         self.logout.setText(_translate("Dialog", "Log out"))
 
 
