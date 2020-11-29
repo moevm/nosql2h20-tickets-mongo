@@ -4,6 +4,22 @@ import json
 from bson.objectid import ObjectId
 
 
+def clear_data():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    db.user.remove()
+    db.trip.remove()
+    db.ticket.remove()
+    db.transport.remove()
+    db.cities.remove()
+
+
+def import_data():
+    import_cities('data/cities.json')
+    import_trans('data/transport.json')
+    import_ticket('data/tickets.json')
+    import_trip('data/trip.json')
+
+
 def add_new_user(email, pass_, ph_num, fio, passp):
     db = pymongo.MongoClient("mongodb://db:27017/").example
     e = list(db.user.find({"email": email}))
@@ -29,29 +45,37 @@ def authorization(email, password):
     return len(u) > 0
 
 
-def get_cities_to_find_ticket():
-    cities = []
+def get_cities():
     db = pymongo.MongoClient("mongodb://db:27017/").example
-    trips = db.trip.find({})
-    for x in trips:
-        cities.append(x.get('from'))
-        cities.append(x.get('to'))
-    return set(cities)
+    cities = db.cities.find({})
+    cities_ = []
+    for x in cities:
+        cities_.append(x["city"])
+    return cities_
 
 
-def get_cities_to_create_ticket():
-    cities_list = []
-    with open("../data/cities.json") as json_file:
-        cities_list = json.load(json_file)
-    return cities_list
+def add_city(city):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    cities = get_cities()
+    if not city in cities:
+        db.cities.insert([{"city": city}])
 
 
-def add_citie(citie):
-    cities = get_cities_to_create_ticket()
-    if not citie in cities:
-        cities.append(citie)
-        with open("../data/cities.json", 'w') as outfile:
-            json.dump(cities, outfile)
+def export_cities(outfile):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    cities_list = list(db.cities.find({}))
+    for x in cities_list:
+        x.pop('_id')
+    with open(outfile, 'w') as outfile:
+        print(cities_list)
+        json.dump(cities_list, outfile)
+
+
+def import_cities(outfile):
+    with open(outfile) as json_file:
+        cities = json.load(json_file)
+        for x in cities:
+            add_city(x['city'])
 
 
 def find_trip(from_, to, depar_date, name):
