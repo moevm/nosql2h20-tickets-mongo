@@ -1,0 +1,6 @@
+[
+  {"from": "A", "to": "B", "depar_date": "2017-10-13T10:53:53.000Z",
+    "arrival_date": "2017-10-14T00:53:53.000Z", "distance": "100",
+    "price": "100", "transport_name": "kek", "ticket_name": "ticket1"}
+
+]
