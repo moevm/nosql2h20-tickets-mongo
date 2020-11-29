@@ -1,1 +1,5 @@
-[{"name": "ticket1"}, {"name": "ticket2"}, {"name": "ticket3"}]
+[
+  {"name": "economy"},
+  {"name": "business"},
+  {"name": "first"}
+]
