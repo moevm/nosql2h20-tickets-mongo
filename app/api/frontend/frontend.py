@@ -158,6 +158,25 @@ def del_button():
 
 
 # Обработчики эл-в гл. окна (admin)
+def add_transport_button():
+    name = mainwin.main_ui.tr_name.text()
+    kind_of_transport = int(mainwin.main_ui.kind_of_tr.value())
+    number_of_seats = int(mainwin.main_ui.seats.value())
+    add_new_transport(name, kind_of_transport, number_of_seats)
+
+
+def add_ticket_button():
+    name = mainwin.main_ui.tick_name.text()
+    add_new_ticket(name)
+
+
+def add_trip_button():
+    from_ = mainwin.main_ui.from_line.text()
+    to_ = mainwin.main_ui.to_line.text()
+
+
+def get_graph_button():
+    pass
 
 
 # Обработчики эл-в окна авторизации
@@ -177,12 +196,12 @@ def login_button():
     if dependent_windows.get('authorization'):
         email = dependent_windows.get('authorization')[1].email_line.text()
         password = dependent_windows.get('authorization')[1].pass_line.text()
-        if (email == 'admin' and password == 'admin'):
+        if email == 'admin' and password == 'admin':
             switch_to_admin_page()
             del dependent_windows['authorization']
             if dependent_windows.get('registration'): del dependent_windows['registration']
         else: switch_to_user_page()
-        if (authorization(email, password)):
+        if authorization(email, password):
             user_data[0] = email; user_data[1] = password
             del dependent_windows['authorization']
             if dependent_windows.get('registration'): del dependent_windows['registration']
@@ -223,7 +242,14 @@ def start():
     mainwin.main_ui.next_button.clicked.connect(next_button)
     mainwin.main_ui.add_flight.clicked.connect(add_button)
     mainwin.main_ui.del_flight.clicked.connect(del_button)
+    mainwin.main_ui.add_tr.clicked.connect(add_transport_button)
+    mainwin.main_ui.add_tick.clicked.connect(add_ticket_button)
+    mainwin.main_ui.add_trip.clicked.connect(add_trip_button)
+    mainwin.main_ui.graph.clicked.connect(get_graph_button)
     mainwin.main_ui.git.clicked.connect(project_link_button)
+
+    mainwin.main_ui.tr_name_2.addItems(get_transport())
+    mainwin.main_ui.tick_name_2.addItems(get_tickets())
 
     disable_user_trip_part()
 
@@ -233,4 +259,3 @@ def start():
 
 if __name__ == "__main__":
     start()
-
