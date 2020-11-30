@@ -179,8 +179,9 @@ def add_trip_button():
     price = int(mainwin.main_ui.price.value())
     name_tr = mainwin.main_ui.tr_name_2.currentText()
     name_tick = mainwin.main_ui.tick_name_2.currentText()
-    date_time = str(mainwin.main_ui.dep_date.dateTime())
-    print(date_time)
+    dep_date = mainwin.main_ui.dep_date.dateTime()
+    arr_date = mainwin.main_ui.arr_date.dateTime()
+    add_new_trip(from_, to_, dep_date, arr_date, name_tr, dist, price, name_tick)
 
 
 def get_graph_button():
