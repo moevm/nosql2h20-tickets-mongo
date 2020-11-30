@@ -14,15 +14,72 @@ dependent_windows = {}
 user_data = [None, None]
 
 
+class TRIPPART:
+    from_ = None
+    to_ = None
+    date = None
+    types = [False, False]
+    classes = [False, False, False]
+
+
 class MAINWIN:
     main_dialog = None
     main_ui = None
+    user_trip = []
+    current_trip = 0
 
 
 mainwin = MAINWIN
 
 
 # Вспомогательные функции
+def updateWidgets():
+    pass
+
+
+def updateInfo():
+    pass
+
+
+def disable_user_trip_part():
+    if mainwin.current_trip == 0: mainwin.main_ui.back_button.setDisabled(True)
+    else: mainwin.main_ui.back_button.setDisabled(False)
+    mainwin.main_ui.add_flight.setDisabled(False)
+    mainwin.main_ui.del_flight.setDisabled(True)
+    mainwin.main_ui.next_button.setDisabled(True)
+    mainwin.main_ui.part.setText('')
+    mainwin.main_ui.label.setDisabled(True)
+    mainwin.main_ui.label_2.setDisabled(True)
+    mainwin.main_ui.label_3.setDisabled(True)
+    mainwin.main_ui.label_10.setDisabled(True)
+    mainwin.main_ui.label_11.setDisabled(True)
+    mainwin.main_ui.from_list.setDisabled(True)
+    mainwin.main_ui.to_list.setDisabled(True)
+    mainwin.main_ui.dateEdit.setDisabled(True)
+    mainwin.main_ui.types.setDisabled(True)
+    mainwin.main_ui.classes.setChecked(True)
+
+
+def enable_user_trip_part():
+    if mainwin.current_trip == 0: mainwin.main_ui.back_button.setDisabled(True)
+    else: mainwin.main_ui.back_button.setDisabled(False)
+    mainwin.main_ui.add_flight.setDisabled(True)
+    if mainwin.current_trip == (len(mainwin.user_trip) - 1): mainwin.main_ui.del_flight.setDisabled(False)
+    else: mainwin.main_ui.del_flight.setDisabled(True)
+    mainwin.main_ui.next_button.setDisabled(False)
+    mainwin.main_ui.part.setText('Part ' + str(mainwin.current_trip + 1))
+    mainwin.main_ui.label.setDisabled(False)
+    mainwin.main_ui.label_2.setDisabled(False)
+    mainwin.main_ui.label_3.setDisabled(False)
+    mainwin.main_ui.label_10.setDisabled(False)
+    mainwin.main_ui.label_11.setDisabled(False)
+    mainwin.main_ui.from_list.setDisabled(False)
+    mainwin.main_ui.to_list.setDisabled(False)
+    mainwin.main_ui.dateEdit.setDisabled(False)
+    mainwin.main_ui.types.setDisabled(False)
+    mainwin.main_ui.classes.setDisabled(False)
+
+
 def switch_to_admin_page():
     if mainwin.main_ui:
         mainwin.main_ui.scrollArea.hide()
@@ -37,6 +94,8 @@ def switch_to_user_page():
         mainwin.main_ui.scrollArea.show()
         _translate = QtCore.QCoreApplication.translate
         mainwin.main_dialog.setWindowTitle(_translate("Dialog", "TicketBase - Main Window (User)"))
+        mainwin.user_trip.clear()
+        mainwin.current_trip = 0
 
 
 # Обработчики эл-в гл. окна (общие)
@@ -60,6 +119,8 @@ def project_link_button():
 
 # Обработчики эл-в гл. окна (user)
 def search_button():
+    if (len(mainwin.user_trip) > 0) and (mainwin.current_trip != len(mainwin.user_trip)): updateInfo()
+
     if dependent_windows.get('flights'): del dependent_windows['flights']
     fl_dialog = QtWidgets.QDialog()
     fl_ui = flights_window()
@@ -67,6 +128,33 @@ def search_button():
 
     dependent_windows['flights'] = [fl_dialog, fl_ui]
     fl_dialog.show()
+
+
+def back_button():
+    if (len(mainwin.user_trip) > 0) and (mainwin.current_trip != len(mainwin.user_trip)): updateInfo()
+    mainwin.current_trip -= 1
+    updateWidgets()
+    enable_user_trip_part()
+
+
+def next_button():
+    if (len(mainwin.user_trip) > 0) and (mainwin.current_trip != len(mainwin.user_trip)): updateInfo()
+    mainwin.current_trip += 1
+    if mainwin.current_trip == len(mainwin.user_trip): disable_user_trip_part()
+    else:
+        updateWidgets()
+        enable_user_trip_part()
+
+
+def add_button():
+    new_part = TRIPPART
+    mainwin.user_trip.append(new_part)
+    enable_user_trip_part()
+
+
+def del_button():
+    mainwin.user_trip.pop(len(mainwin.user_trip) - 1)
+    disable_user_trip_part()
 
 
 # Обработчики эл-в гл. окна (admin)
@@ -128,7 +216,13 @@ def start():
 
     mainwin.main_ui.auth.clicked.connect(authorization_button)
     mainwin.main_ui.search.clicked.connect(search_button)
+    mainwin.main_ui.back_button.clicked.connect(back_button)
+    mainwin.main_ui.next_button.clicked.connect(next_button)
+    mainwin.main_ui.add_flight.clicked.connect(add_button)
+    mainwin.main_ui.del_flight.clicked.connect(del_button)
     mainwin.main_ui.git.clicked.connect(project_link_button)
+
+    disable_user_trip_part()
 
     mainwin.main_dialog.show()
     sys.exit(app.exec_())
@@ -136,3 +230,4 @@ def start():
 
 if __name__ == "__main__":
     start()
+
