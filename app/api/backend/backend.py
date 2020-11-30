@@ -54,6 +54,24 @@ def get_cities():
     return cities_
 
 
+def get_transport():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    transport = db.transport.find({})
+    transport_ = []
+    for x in transport:
+        transport_.append(x["name"])
+    return transport_
+
+
+def get_tickets():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trip = db.trip.find({})
+    trip_ = []
+    for x in trip:
+        trip_.append(x["name"])
+    return trip_
+
+
 def add_city(city):
     db = pymongo.MongoClient("mongodb://db:27017/").example
     cities = get_cities()
