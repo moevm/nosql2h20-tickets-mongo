@@ -177,12 +177,13 @@ def login_button():
     if dependent_windows.get('authorization'):
         email = dependent_windows.get('authorization')[1].email_line.text()
         password = dependent_windows.get('authorization')[1].pass_line.text()
-        if (authorization(email, password)):
-            user_data[0] = email; user_data[1] = password
-            if (email == 'admin' and password == 'admin'): switch_to_admin_page()
-            else: switch_to_user_page()
-            del dependent_windows['authorization']
-            if dependent_windows.get('registration'): del dependent_windows['registration']
+        if (email == 'admin' and password == 'admin'): switch_to_admin_page()
+        else:
+            if (authorization(email, password)):
+                user_data[0] = email; user_data[1] = password
+                else: switch_to_user_page()
+                del dependent_windows['authorization']
+                if dependent_windows.get('registration'): del dependent_windows['registration']
 
 
 def logout_button():
