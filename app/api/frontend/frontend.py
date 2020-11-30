@@ -163,16 +163,24 @@ def add_transport_button():
     kind_of_transport = int(mainwin.main_ui.kind_of_tr.value())
     number_of_seats = int(mainwin.main_ui.seats.value())
     add_new_transport(name, kind_of_transport, number_of_seats)
+    mainwin.main_ui.tr_name_2.addItems(get_transport())
 
 
 def add_ticket_button():
     name = mainwin.main_ui.tick_name.text()
     add_new_ticket(name)
+    mainwin.main_ui.tick_name_2.addItems(get_tickets())
 
 
 def add_trip_button():
     from_ = mainwin.main_ui.from_line.text()
     to_ = mainwin.main_ui.to_line.text()
+    dist = int(mainwin.main_ui.dist.value())
+    price = int(mainwin.main_ui.price.value())
+    name_tr = mainwin.main_ui.tr_name_2.currentItem().text()
+    name_tick = mainwin.main_ui.tick_name_2.currentItem().text()
+    date_time = str(mainwin.main_ui.dep_date.getDate())
+    print(date_time)
 
 
 def get_graph_button():
