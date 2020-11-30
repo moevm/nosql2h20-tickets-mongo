@@ -182,6 +182,8 @@ def add_trip_button():
     dep_date = mainwin.main_ui.dep_date.dateTime()
     arr_date = mainwin.main_ui.arr_date.dateTime()
     add_new_trip(from_, to_, dep_date, arr_date, name_tr, dist, price, name_tick)
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trip_list = list(db.trip.find({}))
 
 
 def get_graph_button():
