@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-import sys, os
+import sys, os, pymongo
 from PyQt5 import QtCore, QtGui, QtWidgets
 from backend.backend import *
 from frontend.gui_py.main_window import Ui_Dialog as main_window
