@@ -459,7 +459,7 @@ class Ui_Dialog(object):
         self.leave.setText(_translate("Dialog", "Top cities to leave"))
         self.visit.setText(_translate("Dialog", "Top cities to visit"))
         self.classes.setText(_translate("Dialog", "Classes statistics"))
-        self.transp.setText(_translate("Dialog", "Popularity of transport types"))
+        self.transp.setText(_translate("Dialog", "Popularity of flights"))
         self.graph.setText(_translate("Dialog", "Get graph"))
         self.label_5.setText(_translate("Dialog", "Transport:"))
         self.label_6.setText(_translate("Dialog", "Ticket:"))
