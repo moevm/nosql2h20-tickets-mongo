@@ -169,7 +169,7 @@ def del_button():
 # Обработчики эл-в гл. окна (admin)
 def add_transport_button():
     name = mainwin.main_ui.tr_name.text()
-    kind_of_transport = int(mainwin.main_ui.kind_of_tr.value())
+    kind_of_transport = mainwin.main_ui.kind_of_tr.text()
     number_of_seats = int(mainwin.main_ui.seats.value())
     add_new_transport(name, kind_of_transport, number_of_seats)
     mainwin.main_ui.tr_name_2.addItems(get_transport())
@@ -248,7 +248,7 @@ def get_graph_button():
         x = numpy.arange(len(types))
         plt.bar(x, height=heights)
         plt.xticks(x, types)
-        plt.title('Popularity of transport types')
+        plt.title('Popularity of flights')
 
     plt.grid()
     plt.show()
