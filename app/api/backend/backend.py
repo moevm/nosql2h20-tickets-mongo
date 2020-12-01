@@ -110,6 +110,12 @@ def find_trip(from_, to, depar_date, name):
     return [trips, mas2]
 
 
+def stat(depar_date_1, depar_date_2):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trips = db.trip.find({"depar_date": {"$gte": depar_date_1, "$lt": depar_date_2} })
+    return list(trips)
+
+
 def get_ticket_type_id(name):
     db = pymongo.MongoClient("mongodb://db:27017/").example
     return db.ticket.find_one({"name": name}).get('_id')
