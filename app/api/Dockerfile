@@ -28,6 +28,9 @@ RUN apt-get install python3.6 -y
 RUN python3 --version
 RUN apt install python3-pip -y
 RUN pip3 install pymongo
+RUN pip3 install matplotlib
+RUN pip3 install numpy
+RUN pip3 install python-dateutil 
 COPY . .
  
 CMD ["python3", "./main.py"]
