@@ -172,18 +172,21 @@ def add_transport_button():
     kind_of_transport = mainwin.main_ui.kind_of_tr.currentText()
     number_of_seats = int(mainwin.main_ui.seats.value())
     add_new_transport(name, kind_of_transport, number_of_seats)
+    mainwin.main_ui.tr_name_2.clear()
     mainwin.main_ui.tr_name_2.addItems(get_transport())
 
 
 def add_ticket_button():
     name = mainwin.main_ui.tick_name.text()
     add_new_ticket(name)
+    mainwin.main_ui.tick_name_2.clear()
     mainwin.main_ui.tick_name_2.addItems(get_tickets())
-    
-    
+
+
 def add_kind_button():
     name = mainwin.main_ui.tick_name_3.text()
     add_kind_of_transport(name)
+    mainwin.main_ui.kind_of_tr.clear()
     mainwin.main_ui.kind_of_tr.addItems(get_kind_of_transport_list())
 
 
@@ -196,11 +199,10 @@ def add_trip_button():
     name_tick = mainwin.main_ui.tick_name_2.currentText()
     dep_date = mainwin.main_ui.dep_date.dateTime().toPyDateTime()
     arr_date = mainwin.main_ui.arr_date.dateTime().toPyDateTime()
-    dep_date = datetime.datetime.strptime(str(dep_date).replace(' ', 'T') + '.000Z', "%Y-%m-%dT%H:%M:%S.000Z")
-    arr_date = datetime.datetime.strptime(str(arr_date).replace(' ', 'T') + '.000Z', "%Y-%m-%dT%H:%M:%S.000Z")
     add_new_trip(from_, to_, dep_date, arr_date, name_tr, dist, price, name_tick)
-    mainwin.main_ui.from_line.setCompleter(QtWidgets.QCompleter(get_cities()))
-    mainwin.main_ui.to_line.setCompleter(QtWidgets.QCompleter(get_cities()))
+    completer = QtWidgets.QCompleter(get_cities())
+    mainwin.main_ui.from_line.setCompleter(completer)
+    mainwin.main_ui.to_line.setCompleter(completer)
 
 
 def get_graph_button():
