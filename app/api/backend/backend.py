@@ -68,6 +68,11 @@ def get_transport():
     return transport_
 
 
+def get_kind_of_transport(id):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    return db.ticket.find_one({'_id': ObjectId(str(id))}).get('kind_of_transport')
+
+
 def get_tickets():
     db = pymongo.MongoClient("mongodb://db:27017/").example
     ticket = db.ticket.find({})
@@ -119,7 +124,7 @@ def stat(depar_date_1, depar_date_2):
     if depar_date_1 == None and depar_date_2 == None:
         trips = db.trip.find({})
     else:
-        trips = db.trip.find({"depar_date": {"$gte": depar_date_1, "$lt": depar_date_2} })
+        trips = db.trip.find({"depar_date": {"$gte": depar_date_1, "$lt": depar_date_2}})
     return list(trips)
 
 
