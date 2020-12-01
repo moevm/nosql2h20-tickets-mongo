@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-import sys, os, pymongo
+import sys, os, pymongo, numpy
+from dateutil.relativedelta import relativedelta
+import matplotlib.pyplot as plt
 from PyQt5 import QtCore, QtGui, QtWidgets
 from backend.backend import *
 from frontend.gui_py.main_window import Ui_Dialog as main_window
@@ -194,7 +196,32 @@ def add_trip_button():
 
 
 def get_graph_button():
-    pass
+    now = datetime.datetime.now()
+    start_date = None
+    if mainwin.main_ui.week.isChecked():
+        start_date = now - datetime.timedelta(days=datetime.date.today().weekday(), weeks=1)
+    if mainwin.main_ui.month.isChecked():
+            start_date = now - relativedelta(months=1)
+    if mainwin.main_ui.threem.isChecked():
+        start_date = now - relativedelta(months=3)
+    if mainwin.main_ui.year.isChecked():
+        start_date = now - relativedelta(years=1)
+    if mainwin.main_ui.alltime.isChecked(): now = None
+
+    trips = stat(start_date, now)
+
+    if mainwin.main_ui.leave.isChecked():
+        cities = get_cities()
+        heights = numpy.zeros(len(cities))
+        for i in range(len(trips)):
+            heights[cities.index(trips[i]['from'])] += 1
+        x = numpy.arange(len(cities))
+        plt.bar(x, height=heights)
+        plt.xticks(x, cities)
+        plt.title('Top cities to leave')
+
+    plt.grid()
+    plt.show()
 
 
 # Обработчики эл-в окна авторизации
