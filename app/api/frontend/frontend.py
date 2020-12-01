@@ -169,7 +169,7 @@ def del_button():
 # Обработчики эл-в гл. окна (admin)
 def add_transport_button():
     name = mainwin.main_ui.tr_name.text()
-    kind_of_transport = mainwin.main_ui.kind_of_tr.text()
+    kind_of_transport = mainwin.main_ui.kind_of_tr.currentText()
     number_of_seats = int(mainwin.main_ui.seats.value())
     add_new_transport(name, kind_of_transport, number_of_seats)
     mainwin.main_ui.tr_name_2.addItems(get_transport())
@@ -179,6 +179,12 @@ def add_ticket_button():
     name = mainwin.main_ui.tick_name.text()
     add_new_ticket(name)
     mainwin.main_ui.tick_name_2.addItems(get_tickets())
+    
+    
+def add_kind_button():
+    name = mainwin.main_ui.tick_name_3.text()
+    add_kind_of_transport(name)
+    mainwin.main_ui.kind_of_tr.addItems(get_kind_of_transport_list())
 
 
 def add_trip_button():
@@ -193,6 +199,8 @@ def add_trip_button():
     dep_date = datetime.datetime.strptime(str(dep_date).replace(' ', 'T') + '.000Z', "%Y-%m-%dT%H:%M:%S.000Z")
     arr_date = datetime.datetime.strptime(str(arr_date).replace(' ', 'T') + '.000Z', "%Y-%m-%dT%H:%M:%S.000Z")
     add_new_trip(from_, to_, dep_date, arr_date, name_tr, dist, price, name_tick)
+    mainwin.main_ui.from_line.setCompleter(QtWidgets.QCompleter(get_cities()))
+    mainwin.main_ui.to_line.setCompleter(QtWidgets.QCompleter(get_cities()))
 
 
 def get_graph_button():
@@ -323,12 +331,17 @@ def start():
     mainwin.main_ui.del_flight.clicked.connect(del_button)
     mainwin.main_ui.add_tr.clicked.connect(add_transport_button)
     mainwin.main_ui.add_tick.clicked.connect(add_ticket_button)
+    mainwin.main_ui.add_kind.clicked.connect(add_kind_button)
     mainwin.main_ui.add_trip.clicked.connect(add_trip_button)
     mainwin.main_ui.graph.clicked.connect(get_graph_button)
     mainwin.main_ui.git.clicked.connect(project_link_button)
 
     mainwin.main_ui.tr_name_2.addItems(get_transport())
     mainwin.main_ui.tick_name_2.addItems(get_tickets())
+    mainwin.main_ui.kind_of_tr.addItems(get_kind_of_transport_list())
+    
+    mainwin.main_ui.from_line.setCompleter(QtWidgets.QCompleter(get_cities()))
+    mainwin.main_ui.to_line.setCompleter(QtWidgets.QCompleter(get_cities()))
 
     disable_user_trip_part()
 
