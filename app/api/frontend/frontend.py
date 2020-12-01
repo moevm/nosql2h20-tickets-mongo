@@ -234,7 +234,7 @@ def get_graph_button():
         classes = get_tickets()
         heights = numpy.zeros(len(classes))
         for i in range(len(trips)):
-            heights[classes.index(trips[i]['ticket_name'])] += 1
+            heights[classes.index(get_ticket_type_name(trips[i]['ticket_id']))] += 1
         x = numpy.arange(len(classes))
         plt.bar(x, height=heights)
         plt.xticks(x, classes)
@@ -244,7 +244,7 @@ def get_graph_button():
         types = get_transport()
         heights = numpy.zeros(len(types))
         for i in range(len(trips)):
-            heights[types.index(trips[i]['transport_name'])] += 1
+            heights[types.index(get_transport_type_name(trips[i]['transport_id']))] += 1
         x = numpy.arange(len(types))
         plt.bar(x, height=heights)
         plt.xticks(x, types)
