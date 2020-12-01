@@ -220,6 +220,36 @@ def get_graph_button():
         plt.xticks(x, cities)
         plt.title('Top cities to leave')
 
+    if mainwin.main_ui.visit.isChecked():
+        cities = get_cities()
+        heights = numpy.zeros(len(cities))
+        for i in range(len(trips)):
+            heights[cities.index(trips[i]['to'])] += 1
+        x = numpy.arange(len(cities))
+        plt.bar(x, height=heights)
+        plt.xticks(x, cities)
+        plt.title('Top cities to visit')
+
+    if mainwin.main_ui.classes.isChecked():
+        classes = get_tickets()
+        heights = numpy.zeros(len(classes))
+        for i in range(len(trips)):
+            heights[classes.index(trips[i]['ticket_name'])] += 1
+        x = numpy.arange(len(classes))
+        plt.bar(x, height=heights)
+        plt.xticks(x, classes)
+        plt.title('Classes statistics')
+
+    if mainwin.main_ui.transp.isChecked():
+        types = get_transport()
+        heights = numpy.zeros(len(types))
+        for i in range(len(trips)):
+            heights[types.index(trips[i]['transport_name'])] += 1
+        x = numpy.arange(len(types))
+        plt.bar(x, height=heights)
+        plt.xticks(x, types)
+        plt.title('Popularity of transport types')
+
     plt.grid()
     plt.show()
 
