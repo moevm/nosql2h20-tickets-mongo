@@ -97,7 +97,6 @@ def export_cities(outfile):
     for x in cities_list:
         x.pop('_id')
     with open(outfile, 'w') as outfile:
-        print(cities_list)
         json.dump(cities_list, outfile)
 
 
@@ -206,7 +205,7 @@ def import_trans(outfile):
     with open(outfile) as json_file:
         trans = json.load(json_file)
         for x in trans:
-            add_new_transport(x['name'], get_kind_of_transport_id(x['kind_of_transport']), x['number_of_seats'])
+            add_new_transport(x['name'], x['kind_of_transport'], x['number_of_seats'])
 
 
 def export_ticket(outfile):
