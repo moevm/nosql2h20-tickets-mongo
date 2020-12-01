@@ -1,283 +1,202 @@
-# -*- coding: utf-8 -*-
-
-
-import sys, os, pymongo
-from PyQt5 import QtCore, QtGui, QtWidgets
-from backend.backend import *
-from frontend.gui_py.main_window import Ui_Dialog as main_window
-from frontend.gui_py.authorization_window import Ui_Dialog as authorization_window
-from frontend.gui_py.flights_window import Ui_Dialog as flights_window
-from frontend.gui_py.registration_window import Ui_Dialog as registration_window
+import pymongo
 import datetime
-
-dependent_windows = {}
-user_data = [None, None]
-
-
-class TRIPPART:
-    from_ = None
-    to_ = None
-    date = None
-    types = [False, False]
-    classes = [False, False, False]
+import json
+from bson.objectid import ObjectId
 
 
-class MAINWIN:
-    main_dialog = None
-    main_ui = None
-    user_trip = []
-    current_trip = 0
+def clear_data():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    db.user.remove()
+    db.trip.remove()
+    db.ticket.remove()
+    db.transport.remove()
+    db.cities.remove()
 
 
-mainwin = MAINWIN
+def import_data():
+    import_cities('data/cities.json')
+    import_trans('data/transport.json')
+    import_ticket('data/tickets.json')
+    import_trip('data/trip.json')
 
 
-# Вспомогательные функции
-def updateWidgets():
-    pass
-
-
-def updateInfo():
-    pass
-
-
-def disable_user_trip_part():
-    if mainwin.current_trip == 0:
-        mainwin.main_ui.back_button.setDisabled(True)
+def add_new_user(email, pass_, ph_num, fio, passp):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    e = list(db.user.find({"email": email}))
+    p = list(db.user.find({"password": pass_}))
+    if len(e) > 0 or len(p) > 0:
+        return "user has already exist"
     else:
-        mainwin.main_ui.back_button.setDisabled(False)
-    mainwin.main_ui.add_flight.setDisabled(False)
-    mainwin.main_ui.del_flight.setDisabled(True)
-    mainwin.main_ui.next_button.setDisabled(True)
-    mainwin.main_ui.part.setText('')
-    mainwin.main_ui.label.setDisabled(True)
-    mainwin.main_ui.label_2.setDisabled(True)
-    mainwin.main_ui.label_3.setDisabled(True)
-    mainwin.main_ui.label_10.setDisabled(True)
-    mainwin.main_ui.label_11.setDisabled(True)
-    mainwin.main_ui.from_list.setDisabled(True)
-    mainwin.main_ui.to_list.setDisabled(True)
-    mainwin.main_ui.dateEdit.setDisabled(True)
-    mainwin.main_ui.types.setDisabled(True)
-    mainwin.main_ui.classes.setChecked(True)
+        db.user.insert([{"email": email,
+                         "password": pass_, "phone_num": ph_num, "fio": fio, "passport": passp, "tickets": []}])
 
 
-def enable_user_trip_part():
-    if mainwin.current_trip == 0:
-        mainwin.main_ui.back_button.setDisabled(True)
-    else:
-        mainwin.main_ui.back_button.setDisabled(False)
-    mainwin.main_ui.add_flight.setDisabled(True)
-    if mainwin.current_trip == (len(mainwin.user_trip) - 1):
-        mainwin.main_ui.del_flight.setDisabled(False)
-    else:
-        mainwin.main_ui.del_flight.setDisabled(True)
-    mainwin.main_ui.next_button.setDisabled(False)
-    mainwin.main_ui.part.setText('Part ' + str(mainwin.current_trip + 1))
-    mainwin.main_ui.label.setDisabled(False)
-    mainwin.main_ui.label_2.setDisabled(False)
-    mainwin.main_ui.label_3.setDisabled(False)
-    mainwin.main_ui.label_10.setDisabled(False)
-    mainwin.main_ui.label_11.setDisabled(False)
-    mainwin.main_ui.from_list.setDisabled(False)
-    mainwin.main_ui.to_list.setDisabled(False)
-    mainwin.main_ui.dateEdit.setDisabled(False)
-    mainwin.main_ui.types.setDisabled(False)
-    mainwin.main_ui.classes.setDisabled(False)
+def add_new_trip(from_, to, depar_date, arrival_date, tran_name, distance, price, ticket_name):
+    print(from_, to, depar_date, arrival_date, tran_name, distance, price, ticket_name)
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    db.trip.insert([{"from": from_, "to": to, "depar_date": depar_date, "arrival_date": arrival_date,
+                     "transport_id": get_transport_type_id(tran_name), "ticket_id": get_ticket_type_id(ticket_name),
+                     "distance": distance,
+                     "price": price}])
 
 
-def switch_to_admin_page():
-    if mainwin.main_ui:
-        mainwin.main_ui.scrollArea.hide()
-        mainwin.main_ui.scrollArea_2.show()
-        _translate = QtCore.QCoreApplication.translate
-        mainwin.main_dialog.setWindowTitle(_translate("Dialog", "TicketBase - Main Window (Administrator)"))
+def authorization(email, password):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    u = list(db.user.find({"email": email, 'password': password}))
+    return len(u) > 0
 
 
-def switch_to_user_page():
-    if mainwin.main_ui:
-        mainwin.main_ui.scrollArea_2.hide()
-        mainwin.main_ui.scrollArea.show()
-        _translate = QtCore.QCoreApplication.translate
-        mainwin.main_dialog.setWindowTitle(_translate("Dialog", "TicketBase - Main Window (User)"))
-        mainwin.user_trip.clear()
-        mainwin.current_trip = 0
+def get_cities():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    cities = db.cities.find({})
+    cities_ = []
+    for x in cities:
+        cities_.append(x["city"])
+    return cities_
 
 
-# Обработчики эл-в гл. окна (общие)
-def authorization_button():
-    if dependent_windows.get('authorization'): del dependent_windows['authorization']
-    auth_dialog = QtWidgets.QDialog()
-    auth_ui = authorization_window()
-    auth_ui.setupUi(auth_dialog)
-
-    auth_ui.reg.clicked.connect(register_button)
-    auth_ui.login.clicked.connect(login_button)
-    auth_ui.logout.clicked.connect(logout_button)
-
-    dependent_windows['authorization'] = [auth_dialog, auth_ui]
-    auth_dialog.show()
+def get_transport():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    transport = db.transport.find({})
+    transport_ = []
+    for x in transport:
+        transport_.append(x["name"])
+    return transport_
 
 
-def project_link_button():
-    os.system('start https://github.com/moevm/nosql2h20-tickets-mongo')
+def get_tickets():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    ticket = db.ticket.find({})
+    ticket_ = []
+    for x in ticket:
+        ticket_.append(x["name"])
+    return ticket_
 
 
-# Обработчики эл-в гл. окна (user)
-def search_button():
-    if (len(mainwin.user_trip) > 0) and (mainwin.current_trip != len(mainwin.user_trip)): updateInfo()
-
-    if dependent_windows.get('flights'): del dependent_windows['flights']
-    fl_dialog = QtWidgets.QDialog()
-    fl_ui = flights_window()
-    fl_ui.setupUi(fl_dialog)
-
-    dependent_windows['flights'] = [fl_dialog, fl_ui]
-    fl_dialog.show()
+def add_city(city):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    cities = get_cities()
+    if not city in cities:
+        db.cities.insert([{"city": city}])
 
 
-def back_button():
-    if (len(mainwin.user_trip) > 0) and (mainwin.current_trip != len(mainwin.user_trip)): updateInfo()
-    mainwin.current_trip -= 1
-    updateWidgets()
-    enable_user_trip_part()
+def export_cities(outfile):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    cities_list = list(db.cities.find({}))
+    for x in cities_list:
+        x.pop('_id')
+    with open(outfile, 'w') as outfile:
+        print(cities_list)
+        json.dump(cities_list, outfile)
 
 
-def next_button():
-    if (len(mainwin.user_trip) > 0) and (mainwin.current_trip != len(mainwin.user_trip)): updateInfo()
-    mainwin.current_trip += 1
-    if mainwin.current_trip == len(mainwin.user_trip):
-        disable_user_trip_part()
-    else:
-        updateWidgets()
-        enable_user_trip_part()
+def import_cities(outfile):
+    with open(outfile) as json_file:
+        cities = json.load(json_file)
+        for x in cities:
+            add_city(x['city'])
 
 
-def add_button():
-    new_part = TRIPPART
-    mainwin.user_trip.append(new_part)
-    enable_user_trip_part()
+def find_trip(from_, to, depar_date, name):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trips = db.trip.find({"depar_date": {"$gte": depar_date}, "from": from_, "to": to})
+    mas1 = db.trip.find({"depar_date": {"$gte": depar_date}, "from": from_})
+    mas2 = list()
+    for x in mas1:
+        e = list(db.trip.find({"from": x.get('to'), "to": to}))
+        if len(e):
+            if (e[0]['depar_date'] > x.get('arrival_date')):
+                mas2.append([x, e])
+    return [trips, mas2]
 
 
-def del_button():
-    mainwin.user_trip.pop(len(mainwin.user_trip) - 1)
-    disable_user_trip_part()
+def get_ticket_type_id(name):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    return db.ticket.find_one({"name": name}).get('_id')
 
 
-# Обработчики эл-в гл. окна (admin)
-def add_transport_button():
-    name = mainwin.main_ui.tr_name.text()
-    kind_of_transport = int(mainwin.main_ui.kind_of_tr.value())
-    number_of_seats = int(mainwin.main_ui.seats.value())
-    add_new_transport(name, kind_of_transport, number_of_seats)
-    mainwin.main_ui.tr_name_2.addItems(get_transport())
+def get_ticket_type_name(id):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    return db.ticket.find_one({'_id': ObjectId(str(id))}).get('name')
 
 
-def add_ticket_button():
-    name = mainwin.main_ui.tick_name.text()
-    add_new_ticket(name)
-    mainwin.main_ui.tick_name_2.addItems(get_tickets())
+def get_transport_type_id(name):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    return db.transport.find_one({"name": name}).get('_id')
 
 
-def add_trip_button():
-    from_ = mainwin.main_ui.from_line.text()
-    to_ = mainwin.main_ui.to_line.text()
-    dist = int(mainwin.main_ui.dist.value())
-    price = int(mainwin.main_ui.price.value())
-    name_tr = mainwin.main_ui.tr_name_2.currentText()
-    name_tick = mainwin.main_ui.tick_name_2.currentText()
-    dep_date = mainwin.main_ui.dep_date.dateTime().toPyDateTime()
-    arr_date = mainwin.main_ui.arr_date.dateTime().toPyDateTime()
-    dep_date = datetime.datetime.strptime(str(dep_date).replace(' ', 'T') + '.000Z', "%Y-%m-%dT%H:%M:%S.000Z")
-    arr_date = datetime.datetime.strptime(str(arr_date).replace(' ', 'T') + '.000Z', "%Y-%m-%dT%H:%M:%S.000Z")
-    add_new_trip(from_, to_, dep_date, arr_date, name_tr, dist, price, name_tick)
+def get_transport_type_name(id):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    return db.transport.find_one({'_id': ObjectId(str(id))}).get('name')
 
 
-def get_graph_button():
-    pass
+def add_trip_to_user(user_id, trip_id):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    db.user.update_one({'_id': user_id}, {"$push": {"tickets": trip_id}})
 
 
-# Обработчики эл-в окна авторизации
-def register_button():
-    if dependent_windows.get('registration'): del dependent_windows['registration']
-    reg_dialog = QtWidgets.QDialog()
-    reg_ui = registration_window()
-    reg_ui.setupUi(reg_dialog)
-
-    reg_ui.registration.clicked.connect(registration_button)
-
-    dependent_windows['registration'] = [reg_dialog, reg_ui]
-    reg_dialog.show()
+def add_new_ticket(name):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    db.ticket.insert([{"name": name}])
 
 
-def login_button():
-    if dependent_windows.get('authorization'):
-        email = dependent_windows.get('authorization')[1].email_line.text()
-        password = dependent_windows.get('authorization')[1].pass_line.text()
-        if email == 'admin' and password == 'admin':
-            switch_to_admin_page()
-            del dependent_windows['authorization']
-            if dependent_windows.get('registration'): del dependent_windows['registration']
-        else:
-            switch_to_user_page()
-        if authorization(email, password):
-            user_data[0] = email;
-            user_data[1] = password
-            del dependent_windows['authorization']
-            if dependent_windows.get('registration'): del dependent_windows['registration']
+def add_new_transport(name, kind_of_transport, number_of_seats):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    db.transport.insert([{"name": name, "kind_of_transport": kind_of_transport, "number_of_seats": number_of_seats}])
 
 
-def logout_button():
-    switch_to_user_page()
-    user_data[0] = None;
-    user_data[1] = None
-    if dependent_windows.get('authorization'): del dependent_windows['authorization']
-    if dependent_windows.get('registration'): del dependent_windows['registration']
+def export_trans(outfile):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trans_list = list(db.transport.find({}))
+    for x in trans_list:
+        x.pop('_id')
+    with open(outfile, 'w') as outfile:
+        json.dump(trans_list, outfile)
 
 
-# Обработчики эл-в окна регистрации
-def registration_button():
-    switch_to_user_page()
-    if dependent_windows.get('registration'):
-        email = dependent_windows.get('registration')[1].email_line.text()
-        password = dependent_windows.get('registration')[1].pass_line.text()
-        phone = dependent_windows.get('registration')[1].phone_line.text()
-        name = dependent_windows.get('registration')[1].name_line.text()
-        passport = dependent_windows.get('registration')[1].passp_line.text()
-        if (add_new_user(email, password, phone, name, passport)) != 'user has already exist':
-            user_data[0] = email;
-            user_data[1] = password
-            del dependent_windows['registration']
-            if dependent_windows.get('authorization'): del dependent_windows['authorization']
+def import_trans(outfile):
+    with open(outfile) as json_file:
+        trans = json.load(json_file)
+        for x in trans:
+            add_new_transport(x['name'], x['kind_of_transport'], x['number_of_seats'])
 
 
-def start():
-    app = QtWidgets.QApplication(sys.argv)
-    mainwin.main_dialog = QtWidgets.QDialog()
-    mainwin.main_ui = main_window()
-    mainwin.main_ui.setupUi(mainwin.main_dialog)
-    mainwin.main_ui.scrollArea_2.hide()
-
-    mainwin.main_ui.auth.clicked.connect(authorization_button)
-    mainwin.main_ui.search.clicked.connect(search_button)
-    mainwin.main_ui.back_button.clicked.connect(back_button)
-    mainwin.main_ui.next_button.clicked.connect(next_button)
-    mainwin.main_ui.add_flight.clicked.connect(add_button)
-    mainwin.main_ui.del_flight.clicked.connect(del_button)
-    mainwin.main_ui.add_tr.clicked.connect(add_transport_button)
-    mainwin.main_ui.add_tick.clicked.connect(add_ticket_button)
-    mainwin.main_ui.add_trip.clicked.connect(add_trip_button)
-    mainwin.main_ui.graph.clicked.connect(get_graph_button)
-    mainwin.main_ui.git.clicked.connect(project_link_button)
-
-    mainwin.main_ui.tr_name_2.addItems(get_transport())
-    mainwin.main_ui.tick_name_2.addItems(get_tickets())
-
-    disable_user_trip_part()
-
-    mainwin.main_dialog.show()
-    sys.exit(app.exec_())
+def export_ticket(outfile):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    tickets_list = list(db.ticket.find({}))
+    for x in tickets_list:
+        x.pop('_id')
+    with open(outfile, 'w') as outfile:
+        json.dump(tickets_list, outfile)
 
 
-if __name__ == "__main__":
-    start()
+def import_ticket(outfile):
+    with open(outfile) as json_file:
+        ticket = json.load(json_file)
+        for x in ticket:
+            add_new_ticket(x['name'])
+
+
+def export_trip(outfile):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trip_list = list(db.trip.find({}))
+    for x in trip_list:
+        x.pop('_id')
+        x['transport_name'] = x.pop('transport_id')
+        x["transport_name"] = get_transport_type_name(x['transport_name'])
+        x['ticket_name'] = x.pop('ticket_id')
+        x["ticket_name"] = get_ticket_type_name(x['ticket_name'])
+        x["depar_date"] = x["depar_date"].strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        x["arrival_date"] = x["arrival_date"].strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    with open(outfile, 'w') as outfile:
+        json.dump(trip_list, outfile)
+
+
+def import_trip(outfile):
+    with open(outfile) as json_file:
+        trip_list = json.load(json_file)
+        for x in trip_list:
+            d1 = datetime.datetime.strptime(x['depar_date'], "%Y-%m-%dT%H:%M:%S.000Z")
+            d2 = datetime.datetime.strptime(x['arrival_date'], "%Y-%m-%dT%H:%M:%S.000Z")
+            add_new_trip(x['from'], x['to'], d1, d2, x['transport_name'],
+                         x['distance'], x['price'], x['ticket_name'])
