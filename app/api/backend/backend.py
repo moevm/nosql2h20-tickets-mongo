@@ -112,7 +112,10 @@ def find_trip(from_, to, depar_date, name):
 
 def stat(depar_date_1, depar_date_2):
     db = pymongo.MongoClient("mongodb://db:27017/").example
-    trips = db.trip.find({"depar_date": {"$gte": depar_date_1, "$lt": depar_date_2} })
+    if depar_date_1 == None and depar_date_2 == None:
+        trips = db.trip.find({})
+    else:
+        trips = db.trip.find({"depar_date": {"$gte": depar_date_1, "$lt": depar_date_2} })
     return list(trips)
 
 
