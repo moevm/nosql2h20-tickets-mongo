@@ -8,7 +8,7 @@ from frontend.gui_py.main_window import Ui_Dialog as main_window
 from frontend.gui_py.authorization_window import Ui_Dialog as authorization_window
 from frontend.gui_py.flights_window import Ui_Dialog as flights_window
 from frontend.gui_py.registration_window import Ui_Dialog as registration_window
-
+import datetime
 
 dependent_windows = {}
 user_data = [None, None]
@@ -42,8 +42,10 @@ def updateInfo():
 
 
 def disable_user_trip_part():
-    if mainwin.current_trip == 0: mainwin.main_ui.back_button.setDisabled(True)
-    else: mainwin.main_ui.back_button.setDisabled(False)
+    if mainwin.current_trip == 0:
+        mainwin.main_ui.back_button.setDisabled(True)
+    else:
+        mainwin.main_ui.back_button.setDisabled(False)
     mainwin.main_ui.add_flight.setDisabled(False)
     mainwin.main_ui.del_flight.setDisabled(True)
     mainwin.main_ui.next_button.setDisabled(True)
@@ -61,11 +63,15 @@ def disable_user_trip_part():
 
 
 def enable_user_trip_part():
-    if mainwin.current_trip == 0: mainwin.main_ui.back_button.setDisabled(True)
-    else: mainwin.main_ui.back_button.setDisabled(False)
+    if mainwin.current_trip == 0:
+        mainwin.main_ui.back_button.setDisabled(True)
+    else:
+        mainwin.main_ui.back_button.setDisabled(False)
     mainwin.main_ui.add_flight.setDisabled(True)
-    if mainwin.current_trip == (len(mainwin.user_trip) - 1): mainwin.main_ui.del_flight.setDisabled(False)
-    else: mainwin.main_ui.del_flight.setDisabled(True)
+    if mainwin.current_trip == (len(mainwin.user_trip) - 1):
+        mainwin.main_ui.del_flight.setDisabled(False)
+    else:
+        mainwin.main_ui.del_flight.setDisabled(True)
     mainwin.main_ui.next_button.setDisabled(False)
     mainwin.main_ui.part.setText('Part ' + str(mainwin.current_trip + 1))
     mainwin.main_ui.label.setDisabled(False)
@@ -140,7 +146,8 @@ def back_button():
 def next_button():
     if (len(mainwin.user_trip) > 0) and (mainwin.current_trip != len(mainwin.user_trip)): updateInfo()
     mainwin.current_trip += 1
-    if mainwin.current_trip == len(mainwin.user_trip): disable_user_trip_part()
+    if mainwin.current_trip == len(mainwin.user_trip):
+        disable_user_trip_part()
     else:
         updateWidgets()
         enable_user_trip_part()
@@ -179,11 +186,11 @@ def add_trip_button():
     price = int(mainwin.main_ui.price.value())
     name_tr = mainwin.main_ui.tr_name_2.currentText()
     name_tick = mainwin.main_ui.tick_name_2.currentText()
-    dep_date = mainwin.main_ui.dep_date.dateTime()
-    arr_date = mainwin.main_ui.arr_date.dateTime()
+    dep_date = mainwin.main_ui.dep_date.dateTime().toPyDateTime()
+    arr_date = mainwin.main_ui.arr_date.dateTime().toPyDateTime()
+    dep_date = datetime.datetime.strptime(str(dep_date).replace(' ', 'T') + '.000Z', "%Y-%m-%dT%H:%M:%S.000Z")
+    arr_date = datetime.datetime.strptime(str(arr_date).replace(' ', 'T') + '.000Z', "%Y-%m-%dT%H:%M:%S.000Z")
     add_new_trip(from_, to_, dep_date, arr_date, name_tr, dist, price, name_tick)
-    db = pymongo.MongoClient("mongodb://db:27017/").example
-    trip_list = list(db.trip.find({}))
 
 
 def get_graph_button():
@@ -211,16 +218,19 @@ def login_button():
             switch_to_admin_page()
             del dependent_windows['authorization']
             if dependent_windows.get('registration'): del dependent_windows['registration']
-        else: switch_to_user_page()
+        else:
+            switch_to_user_page()
         if authorization(email, password):
-            user_data[0] = email; user_data[1] = password
+            user_data[0] = email;
+            user_data[1] = password
             del dependent_windows['authorization']
             if dependent_windows.get('registration'): del dependent_windows['registration']
 
 
 def logout_button():
     switch_to_user_page()
-    user_data[0] = None; user_data[1] = None
+    user_data[0] = None;
+    user_data[1] = None
     if dependent_windows.get('authorization'): del dependent_windows['authorization']
     if dependent_windows.get('registration'): del dependent_windows['registration']
 
@@ -235,7 +245,8 @@ def registration_button():
         name = dependent_windows.get('registration')[1].name_line.text()
         passport = dependent_windows.get('registration')[1].passp_line.text()
         if (add_new_user(email, password, phone, name, passport)) != 'user has already exist':
-            user_data[0] = email; user_data[1] = password
+            user_data[0] = email;
+            user_data[1] = password
             del dependent_windows['registration']
             if dependent_windows.get('authorization'): del dependent_windows['authorization']
 
