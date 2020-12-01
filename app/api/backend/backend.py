@@ -70,7 +70,7 @@ def get_transport():
 
 def get_kind_of_transport(id):
     db = pymongo.MongoClient("mongodb://db:27017/").example
-    return db.ticket.find_one({'_id': ObjectId(str(id))}).get('kind_of_transport')
+    return db.transport.find_one({'_id': ObjectId(str(id))}).get('kind_of_transport')
 
 
 def get_tickets():
