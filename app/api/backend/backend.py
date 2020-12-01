@@ -11,10 +11,12 @@ def clear_data():
     db.ticket.remove()
     db.transport.remove()
     db.cities.remove()
+    db.kind_of_transport.remove()
 
 
 def import_data():
     import_cities('data/cities.json')
+    import_kind_of_transport('data/kind_of_transport.json')
     import_trans('data/transport.json')
     import_ticket('data/tickets.json')
     import_trip('data/trip.json')
@@ -106,6 +108,29 @@ def import_cities(outfile):
             add_city(x['city'])
 
 
+def add_kind_of_transport(name):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    db.kind_of_transport.insert([{"name": name}])
+
+
+def get_kind_of_transport_list():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    transport = db.kind_of_transport.find({})
+    transport_ = []
+    for x in transport:
+        transport_.append(x["name"])
+    return transport_
+
+
+def get_kind_of_transport_id(name):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    return db.kind_of_transport.find_one({"name": name}).get('_id')
+
+def get_kind_of_transport_name(id):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    return db.kind_of_transport.find_one({"_id": id}).get('name')
+
+
 def find_trip(from_, to, depar_date, name):
     db = pymongo.MongoClient("mongodb://db:27017/").example
     trips = db.trip.find({"depar_date": {"$gte": depar_date}, "from": from_, "to": to})
@@ -160,13 +185,18 @@ def add_new_ticket(name):
 
 def add_new_transport(name, kind_of_transport, number_of_seats):
     db = pymongo.MongoClient("mongodb://db:27017/").example
-    db.transport.insert([{"name": name, "kind_of_transport": kind_of_transport, "number_of_seats": number_of_seats}])
+    k_trans = get_kind_of_transport_list()
+    if kind_of_transport not in k_trans:
+        add_kind_of_transport(kind_of_transport)
+    db.transport.insert([{"name": name, "kind_of_transport": get_kind_of_transport_id(kind_of_transport),
+                          "number_of_seats": number_of_seats}])
 
 
 def export_trans(outfile):
     db = pymongo.MongoClient("mongodb://db:27017/").example
     trans_list = list(db.transport.find({}))
     for x in trans_list:
+        x["kind_of_transport"] = get_kind_of_transport_name(x["kind_of_transport"])
         x.pop('_id')
     with open(outfile, 'w') as outfile:
         json.dump(trans_list, outfile)
@@ -176,7 +206,7 @@ def import_trans(outfile):
     with open(outfile) as json_file:
         trans = json.load(json_file)
         for x in trans:
-            add_new_transport(x['name'], x['kind_of_transport'], x['number_of_seats'])
+            add_new_transport(x['name'], get_kind_of_transport_id(x['kind_of_transport']), x['number_of_seats'])
 
 
 def export_ticket(outfile):
@@ -193,6 +223,22 @@ def import_ticket(outfile):
         ticket = json.load(json_file)
         for x in ticket:
             add_new_ticket(x['name'])
+
+
+def export_kind_of_transport(outfile):
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    tr_list = list(db.kind_of_transport.find({}))
+    for x in tr_list:
+        x.pop('_id')
+    with open(outfile, 'w') as outfile:
+        json.dump(tr_list, outfile)
+
+
+def import_kind_of_transport(outfile):
+    with open(outfile) as json_file:
+        k_trans = json.load(json_file)
+        for x in k_trans:
+            add_kind_of_transport(x['name'])
 
 
 def export_trip(outfile):
