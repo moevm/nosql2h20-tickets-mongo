@@ -32,8 +32,12 @@ def add_new_user(email, pass_, ph_num, fio, passp):
 
 
 def add_new_trip(from_, to, depar_date, arrival_date, tran_name, distance, price, ticket_name):
-    print(from_, to, depar_date, arrival_date, tran_name, distance, price, ticket_name)
     db = pymongo.MongoClient("mongodb://db:27017/").example
+    cities = get_cities()
+    if from_ not in cities:
+        add_city(from_)
+    if to not in cities:
+        add_city(to)
     db.trip.insert([{"from": from_, "to": to, "depar_date": depar_date, "arrival_date": arrival_date,
                      "transport_id": get_transport_type_id(tran_name), "ticket_id": get_ticket_type_id(ticket_name),
                      "distance": distance,
