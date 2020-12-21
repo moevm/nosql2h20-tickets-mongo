@@ -121,9 +121,70 @@ def get_kind_of_transport_list():
     return transport_
 
 
+def get_ticket_data():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    tickets_list = list(db.ticket.find({}))
+    ticket = []
+    keys = list(db.ticket.find_one({}))
+    keys.remove('_id')
+    for x in tickets_list:
+        x.pop('_id')
+        ticket.append([x["name"]])
+    return {"keys": keys, "data": ticket}
+
+
+def get_kind_of_transport_data():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    tr_list = list(db.kind_of_transport.find({}))
+    tr = []
+    keys = list(db.kind_of_transport.find_one({}))
+    keys.remove('_id')
+    for x in tr_list:
+        x.pop('_id')
+        tr.append([x['name']])
+    return {"keys": keys, "data": tr}
+
+
+def get_transp_data():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trans_list = list(db.transport.find({}))
+    transp = []
+    keys = list(db.transport.find_one({}))
+    keys.remove('_id')
+    for x in trans_list:
+        x["kind_of_transport"] = get_kind_of_transport_name(x["kind_of_transport"])
+        x.pop('_id')
+        transp.append([x["name"], x["kind_of_transport"], x["number_of_seats"]])
+    return {"keys": keys, "data": transp}
+
+
+def get_ticket_list():
+    db = pymongo.MongoClient("mongodb://db:27017/").example
+    trip_list = list(db.trip.find({}))
+    trips = []
+    keys = list(db.trip.find_one({}))
+    keys.remove('_id')
+    keys[keys.index('transport_id')] = 'transport_name'
+    keys[keys.index('ticket_id')] = 'ticket_name'
+    # print("kek",keys)
+    for x in trip_list:
+        x.pop('_id')
+        x['transport_name'] = x.pop('transport_id')
+        x["transport_name"] = get_transport_type_name(x['transport_name'])
+        x['ticket_name'] = x.pop('ticket_id')
+        x["ticket_name"] = get_ticket_type_name(x['ticket_name'])
+        x["depar_date"] = x["depar_date"].strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        x["arrival_date"] = x["arrival_date"].strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        trips.append(
+            [x['from'], x['to'], x['depar_date'], x['arrival_date'], x['distance'], x['price'], x['transport_name'],
+             x['ticket_name']])
+    return {"keys": keys, "trip": trips}
+
+
 def get_kind_of_transport_id(name):
     db = pymongo.MongoClient("mongodb://db:27017/").example
     return db.kind_of_transport.find_one({"name": name}).get('_id')
+
 
 def get_kind_of_transport_name(id):
     db = pymongo.MongoClient("mongodb://db:27017/").example

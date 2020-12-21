@@ -2,9 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cae6206e-6b88-4f20-acb0-7f9865ba5a3f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/api/data/kind_of_transport.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/idz.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/idz.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/backend/backend.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/backend/backend.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/frontend/frontend.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/frontend/gui_py/authorization_window.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/frontend/gui_py/flights_window.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/frontend/gui_py/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/frontend/gui_py/main_window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/frontend/gui_py/registration_window.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/frontend/gui_xml/authorization_window.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/frontend/gui_xml/flights.ui" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/frontend/gui_xml/main_window.ui" beforeDir="false" afterPath="$PROJECT_DIR$/api/frontend/gui_xml/main_window.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/frontend/gui_xml/registration_window.ui" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/api/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
     </list>
@@ -31,8 +41,36 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\4semestr\nosql\nosql2h20-tickets-mongo\app\api\frontend\gui_py" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.kek">
+    <configuration name="kek" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="idz" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/api" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/api/kek.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="idz" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -56,6 +94,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.kek" />
         <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
@@ -74,9 +113,49 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="469" y="240" key="com.intellij.ide.util.TipDialog" timestamp="1606821714949">
+    <state x="889" y="118" key="FileChooserDialogImpl" timestamp="1608391215381">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="469" y="240" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1606821714949" />
+    <state x="889" y="118" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1608391215381" />
+    <state width="1515" height="132" key="GridCell.Tab.0.bottom" timestamp="1608562614799">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="132" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1608562614799" />
+    <state width="1515" height="132" key="GridCell.Tab.0.center" timestamp="1608562614799">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="132" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1608562614799" />
+    <state width="1515" height="132" key="GridCell.Tab.0.left" timestamp="1608562614799">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="132" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1608562614799" />
+    <state width="1515" height="132" key="GridCell.Tab.0.right" timestamp="1608562614799">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="132" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1608562614799" />
+    <state width="1515" height="261" key="GridCell.Tab.1.bottom" timestamp="1608382208303">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="261" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1608382208303" />
+    <state width="1515" height="261" key="GridCell.Tab.1.center" timestamp="1608382208303">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="261" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1608382208303" />
+    <state width="1515" height="261" key="GridCell.Tab.1.left" timestamp="1608382208303">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="261" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1608382208303" />
+    <state width="1515" height="261" key="GridCell.Tab.1.right" timestamp="1608382208303">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1515" height="261" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1608382208303" />
+    <state x="272" y="57" key="SettingsEditor" timestamp="1608379486280">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="272" y="57" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1608379486280" />
+    <state x="469" y="240" key="com.intellij.ide.util.TipDialog" timestamp="1608378185581">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="469" y="240" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1608378185581" />
   </component>
 </project>
