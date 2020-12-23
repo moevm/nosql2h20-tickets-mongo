@@ -7,7 +7,9 @@ import datetime
 
 
 backend.clear_data()
-backend.import_data()
+#backend.import_data()
+backend.import_database('data/data.json')
+
 
 #db = pymongo.MongoClient("mongodb://db:27017/").example
 #print(list(db.kind_of_transport.find({})))
@@ -17,5 +19,6 @@ app = QtWidgets.QApplication(sys.argv)
 main_ui = Ui_MainWindow()
 win = QtWidgets.QMainWindow()
 main_ui.setupUi(win)
-win.show()
+main_ui.show()
+#win.show()
 sys.exit(app.exec_())

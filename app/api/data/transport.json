@@ -1,7 +1,7 @@
 [
-  {"name": "train1", "kind_of_transport": "train", "number_of_seats": 100},
-  {"name": "train2", "kind_of_transport": "train", "number_of_seats": 100},
-  {"name": "train3", "kind_of_transport": "train", "number_of_seats": 100},
-  {"name": "plane1", "kind_of_transport": "plane", "number_of_seats": 100},
-  {"name": "plane2", "kind_of_transport": "plane", "number_of_seats": 100}
+  {"name": "train1", "kind_of_transport": "train", "number_of_seats": 2},
+  {"name": "train2", "kind_of_transport": "train", "number_of_seats": 2},
+  {"name": "train3", "kind_of_transport": "train", "number_of_seats": 2},
+  {"name": "plane1", "kind_of_transport": "plane", "number_of_seats": 2},
+  {"name": "plane2", "kind_of_transport": "plane", "number_of_seats": 2}
 ]
