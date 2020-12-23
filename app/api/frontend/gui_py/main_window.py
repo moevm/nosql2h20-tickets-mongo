@@ -112,7 +112,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.tableWidget.setRowCount(0)
         self.tableWidget.setHorizontalHeaderLabels(data['keys'])
         # self.resize(1100, 500)
-        self.tableWidget.setFixedSize(QtCore.QSize(1100, 500))
+        self.tableWidget.setFixedSize(QtCore.QSize(1100, 450))
         self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         for rowNumber in range(0, len(data['trip'])):
             self.tableWidget.insertRow(rowNumber)
