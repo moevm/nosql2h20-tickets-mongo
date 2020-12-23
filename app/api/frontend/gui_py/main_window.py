@@ -25,7 +25,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def show_admin_page(self):
         self.menuShow_user.menuAction().setVisible(False)
         self.stackedWidget.setCurrentWidget(self.admin_page)
-        self.resize(1100, 500)
+        self.resize(1100, 600)
         self.menubar.setVisible(True)
         self.menuFile.menuAction().setVisible(True)
         self.menuShow.menuAction().setVisible(True)
