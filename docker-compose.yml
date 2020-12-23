@@ -12,7 +12,7 @@ services:
     - "8080:8080"
     environment:
     - DISPLAY=$DISPLAY
-    #- DISPLAY=169.254.34.18:0
+    #- DISPLAY=192.168.31.128:0
 
    # - QT_QPA_PLATFORM=linuxfb
   #      - QT_LOGGING_RULES='.debug=false;qt.qpa.=false'
@@ -24,5 +24,3 @@ services:
     container_name: db
     ports:
       - "27017:27017"
-    logging:
-         driver: "none"
