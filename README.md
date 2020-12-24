@@ -3,6 +3,7 @@
 * xhost local:root
 * docker-compose build –no-cache
 * docker-compose up
+* start.sh
 ## Страница админинстратора
 * Логин: admin
 * Пароль: admin
