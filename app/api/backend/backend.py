@@ -46,7 +46,8 @@ def add_new_trip(from_, to, depar_date, arrival_date, tran_name, distance, price
         add_city(from_)
     if to not in cities:
         add_city(to)
-    db.trip.insert([{"from": from_, "to": to, "depar_date": depar_date, "arrival_date": arrival_date,
+
+    db.trip.insert([{"from": from_.lower(), "to": to.lower(), "depar_date": depar_date, "arrival_date": arrival_date,
                      "transport_id": get_transport_type_id(tran_name), "ticket_id": get_ticket_type_id(ticket_name),
                      "distance": distance,
                      "price": price}])
@@ -295,24 +296,11 @@ def find_trip(from_, to, depar_date, tickets_names):
     db = client.example
     depar_date_1 = datetime.datetime.strptime(depar_date, "%Y-%m-%dT%H:%M:%S.000Z") + datetime.timedelta(hours=23,
                                                                                                          minutes=59)
-
-    print("++++++++++++++", depar_date, depar_date_1.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
-
-    # trips = db.trip.find({
-    #     "depar_date": {"$gte": datetime.datetime.strptime(depar_date, "%Y-%m-%dT%H:%M:%S.000Z"),
-    #     "$lte": depar_date_1.strftime("%Y-%m-%dT%H:%M:%S.000Z")}, "from": from_, "to": to
-    # })
-
-    # mas1 = db.trip.find({
-    #     "depar_date": {"$gte": datetime.datetime.strptime(depar_date, "%Y-%m-%dT%H:%M:%S.000Z"),
-    #             "$lt":depar_date_1.strftime("%Y-%m-%dT%H:%M:%S.000Z")}, "from": from_
-    # })
-
     trips = db.trip.find(
-        {"depar_date": {"$gte": datetime.datetime.strptime(depar_date, "%Y-%m-%dT%H:%M:%S.000Z")}, "from": from_,
-         "to": to})
+        {"depar_date": {"$gte": datetime.datetime.strptime(depar_date, "%Y-%m-%dT%H:%M:%S.000Z")}, "from": from_.lower(),
+         "to": to.lower()})
     mas1 = db.trip.find(
-        {"depar_date": {"$gte": datetime.datetime.strptime(depar_date, "%Y-%m-%dT%H:%M:%S.000Z")}, "from": from_})
+        {"depar_date": {"$gte": datetime.datetime.strptime(depar_date, "%Y-%m-%dT%H:%M:%S.000Z")}, "from": from_.lower()})
     data = []
     for x in mas1:
         if x["depar_date"].strftime("%Y-%m-%dT%H:%M:%S.000Z") > depar_date_1.strftime("%Y-%m-%dT%H:%M:%S.000Z") \
