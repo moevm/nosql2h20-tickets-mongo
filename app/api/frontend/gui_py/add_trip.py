@@ -20,7 +20,6 @@ class Ui_Form(object):
         self.qwid.show()
 
     def add_trip_clicked(self):
-        print("kek")
         from_ = self.from_line.text()
         to_ = self.to_line.text()
         dist = int(self.dist.value())
@@ -30,7 +29,9 @@ class Ui_Form(object):
         dep_date = self.dep_date.dateTime().toPyDateTime()
         arr_date = self.arr_date.dateTime().toPyDateTime()
         add_new_trip(from_, to_, dep_date, arr_date, name_tr, dist, price, name_tick)
+
         completer = QtWidgets.QCompleter(get_cities())
+
         self.from_line.setCompleter(completer)
         self.to_line.setCompleter(completer)
         self.qwid.close()
@@ -41,8 +42,10 @@ class Ui_Form(object):
     def preset(self):
         self.tr_name_2.addItems(get_transport())
         self.tick_name_2.addItems(get_tickets())
-        self.from_line.setCompleter(QtWidgets.QCompleter(get_cities()))
-        self.to_line.setCompleter(QtWidgets.QCompleter(get_cities()))
+        self.completer = QtWidgets.QCompleter(get_cities())
+        self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.from_line.setCompleter(self.completer)
+        self.to_line.setCompleter(self.completer)
 
     def setupUi(self, Form):
         Form.setObjectName("Form")
