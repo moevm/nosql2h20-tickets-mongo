@@ -2,10 +2,14 @@ import pymongo
 import datetime
 import json
 from bson.objectid import ObjectId
+from pymongo import MongoClient
 
 
 def clear_data():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
+
+    #db = pymongo.MongoClient("mongodb://db:27017/").example
     db.user.remove()
     db.trip.remove()
     db.ticket.remove()
@@ -23,7 +27,8 @@ def import_data():
 
 
 def add_new_user(email, pass_, ph_num, fio, passp, tickets):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     e = list(db.user.find({"email": email}))
     p = list(db.user.find({"password": pass_}))
     if len(e) > 0 or len(p) > 0:
@@ -34,7 +39,8 @@ def add_new_user(email, pass_, ph_num, fio, passp, tickets):
 
 
 def add_new_trip(from_, to, depar_date, arrival_date, tran_name, distance, price, ticket_name):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     cities = get_cities()
     if from_ not in cities:
         add_city(from_)
@@ -47,31 +53,36 @@ def add_new_trip(from_, to, depar_date, arrival_date, tran_name, distance, price
 
 
 def get_user_by_id(user_id):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     u = list(db.user.find({"_id": ObjectId(str(user_id))}))
     return u[0]
 
 
 def get_user_trips_by_email_pass(email, password):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     u = list(db.user.find({"email": email, 'password': password}))
     return u[0]["tickets"]
 
 
 def get_user_id(email, password):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     u = list(db.user.find({"email": email, 'password': password}))
     return u[0]['_id']
 
 
 def authorization(email, password):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     u = list(db.user.find({"email": email, 'password': password}))
     return len(u) > 0
 
 
 def get_cities():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     cities = db.cities.find({})
     cities_ = []
     for x in cities:
@@ -80,7 +91,8 @@ def get_cities():
 
 
 def get_transport():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     transport = db.transport.find({})
     transport_ = []
     for x in transport:
@@ -89,17 +101,20 @@ def get_transport():
 
 
 def get_kind_of_transport(id):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     return db.transport.find_one({'_id': ObjectId(str(id))}).get('kind_of_transport')
 
 
 def get_trips():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     return list(db.trip.find({}))
 
 
 def get_tickets():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     ticket = db.ticket.find({})
     ticket_ = []
     for x in ticket:
@@ -108,14 +123,16 @@ def get_tickets():
 
 
 def add_city(city):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     cities = get_cities()
     if not city in cities:
         db.cities.insert([{"city": city}])
 
 
 def export_cities(outfile):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     cities_list = list(db.cities.find({}))
     for x in cities_list:
         x.pop('_id')
@@ -131,12 +148,14 @@ def import_cities(outfile):
 
 
 def add_kind_of_transport(name):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     db.kind_of_transport.insert([{"name": name}])
 
 
 def get_kind_of_transport_list():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     transport = db.kind_of_transport.find({})
     transport_ = []
     for x in transport:
@@ -144,7 +163,8 @@ def get_kind_of_transport_list():
     return transport_
 
 def get_user_data():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     user_list = list(db.user.find({}))
     trip_list = list(db.trip.find({}))
     user = []
@@ -174,7 +194,8 @@ def get_user_data():
 
 
 def get_ticket_data():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     tickets_list = list(db.ticket.find({}))
     ticket = []
     keys = list(db.ticket.find_one({}))
@@ -186,7 +207,8 @@ def get_ticket_data():
 
 
 def get_kind_of_transport_data():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     tr_list = list(db.kind_of_transport.find({}))
     tr = []
     keys = list(db.kind_of_transport.find_one({}))
@@ -198,7 +220,8 @@ def get_kind_of_transport_data():
 
 
 def get_transp_data():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     trans_list = list(db.transport.find({}))
     transp = []
     keys = list(db.transport.find_one({}))
@@ -211,7 +234,8 @@ def get_transp_data():
 
 
 def get_trip_keys():
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     keys = list(db.trip.find_one({}))
     keys.remove('_id')
     keys[4] = 'transport name'
@@ -220,7 +244,8 @@ def get_trip_keys():
 
 
 def get_ticket_list(id_list):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     trip_list = []
     if id_list is not None:
         trip_list = []
@@ -254,17 +279,20 @@ def get_ticket_list(id_list):
 
 
 def get_kind_of_transport_id(name):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     return db.kind_of_transport.find_one({"name": name}).get('_id')
 
 
 def get_kind_of_transport_name(id):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     return db.kind_of_transport.find_one({"_id": id}).get('name')
 
 
 def find_trip(from_, to, depar_date, tickets_names):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     depar_date_1 = datetime.datetime.strptime(depar_date, "%Y-%m-%dT%H:%M:%S.000Z") + datetime.timedelta(hours=23,
                                                                                                          minutes=59)
 
@@ -351,7 +379,8 @@ def find_trip(from_, to, depar_date, tickets_names):
 
 
 def stat(depar_date_1, depar_date_2):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     if depar_date_1 == None and depar_date_2 == None:
         trips = db.trip.find({})
     else:
@@ -360,27 +389,32 @@ def stat(depar_date_1, depar_date_2):
 
 
 def get_ticket_type_id(name):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     return db.ticket.find_one({"name": name}).get('_id')
 
 
 def get_ticket_type_name(id):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     return db.ticket.find_one({'_id': ObjectId(str(id))}).get('name')
 
 
 def get_transport_type_id(name):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     return db.transport.find_one({"name": name}).get('_id')
 
 
 def get_transport_type_name(id):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     return db.transport.find_one({'_id': ObjectId(str(id))}).get('name')
 
 
 def add_trip_to_user(user_id, trip_id):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     trans_id = db.trip.find_one({'_id': ObjectId(str(trip_id))}).get('transport_id')
     trans_seats = db.transport.find_one({'_id': ObjectId(str(trans_id))}).get('number_of_seats')
     db.user.update_one({'_id': ObjectId(str(user_id))}, {"$push": {"tickets": ObjectId(str(trip_id))}})
@@ -389,12 +423,14 @@ def add_trip_to_user(user_id, trip_id):
 
 
 def add_new_ticket(name):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     db.ticket.insert([{"name": name}])
 
 
 def add_new_transport(name, kind_of_transport, number_of_seats):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     k_trans = get_kind_of_transport_list()
     if kind_of_transport not in k_trans:
         add_kind_of_transport(kind_of_transport)
@@ -403,7 +439,8 @@ def add_new_transport(name, kind_of_transport, number_of_seats):
 
 
 def export_trans(outfile):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     trans_list = list(db.transport.find({}))
     for x in trans_list:
         x["kind_of_transport"] = get_kind_of_transport_name(x["kind_of_transport"])
@@ -420,7 +457,8 @@ def import_trans(outfile):
 
 
 def export_ticket(outfile):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     tickets_list = list(db.ticket.find({}))
     for x in tickets_list:
         x.pop('_id')
@@ -436,7 +474,8 @@ def import_ticket(outfile):
 
 
 def export_kind_of_transport(outfile):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     tr_list = list(db.kind_of_transport.find({}))
     for x in tr_list:
         x.pop('_id')
@@ -452,7 +491,8 @@ def import_kind_of_transport(outfile):
 
 
 def import_database(outfile):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     data = []
     trip_indixes = []
     with open(outfile) as json_file:
@@ -491,7 +531,8 @@ def import_database(outfile):
 
 
 def export_database(outfile):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     cities_list = list(db.cities.find({}))
     tr_list = list(db.kind_of_transport.find({}))
     trans_list = list(db.transport.find({}))
@@ -533,7 +574,8 @@ def export_database(outfile):
 
 
 def export_trip(outfile):
-    db = pymongo.MongoClient("mongodb://db:27017/").example
+    client = MongoClient()
+    db = client.example
     trip_list = list(db.trip.find({}))
     for x in trip_list:
         x.pop('_id')
