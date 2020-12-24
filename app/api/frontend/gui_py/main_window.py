@@ -25,7 +25,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def show_admin_page(self):
         self.menuShow_user.menuAction().setVisible(False)
         self.stackedWidget.setCurrentWidget(self.admin_page)
-        self.resize(1100, 600)
+        self.resize(1100, 500)
         self.menubar.setVisible(True)
         self.menuFile.menuAction().setVisible(True)
         self.menuShow.menuAction().setVisible(True)
@@ -112,7 +112,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.tableWidget.setRowCount(0)
         self.tableWidget.setHorizontalHeaderLabels(data['keys'])
         # self.resize(1100, 500)
-        self.tableWidget.setFixedSize(QtCore.QSize(1100, 450))
+        self.tableWidget.setFixedSize(QtCore.QSize(1100, 500))
         self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         for rowNumber in range(0, len(data['trip'])):
             self.tableWidget.insertRow(rowNumber)
@@ -169,6 +169,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.menuFile.menuAction().setVisible(False)
         self.menuShow.menuAction().setVisible(False)
         self.resize(1300, 700)
+        self.completer = QtWidgets.QCompleter(get_cities())
+        self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+
+        self.from_line.setCompleter(self.completer)
+        self.to_line.setCompleter(self.completer)
 
         if "trips_search_layout" in locals():
             for i in reversed(range(self.trips_search_layout.count())):
@@ -337,8 +342,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.cr_new_acc_butt.clicked.connect(self.cr_new_acc_butt_clicked)
         self.reg_cancel_butt.clicked.connect(self.reg_cancel_butt_clicked)
         self.search_but.clicked.connect(self.search_but_clicked)
-        self.from_line.setCompleter(QtWidgets.QCompleter(get_cities()))
-        self.to_line.setCompleter(QtWidgets.QCompleter(get_cities()))
+
         self.actionTrip_user.triggered.connect(self.actionTrip_user_clicked)
 
     def setupUi(self, MainWindow):
@@ -692,7 +696,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.show_auth_page()
         # self.show_user_page()
         # self.show_admin_page()
-
+        self.completer = QtWidgets.QCompleter(get_cities())
+        self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         # MainWindow.show()
