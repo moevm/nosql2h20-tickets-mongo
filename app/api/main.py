@@ -8,7 +8,7 @@ import datetime
 
 backend.clear_data()
 #backend.import_data()
-backend.import_database('data/data.json')
+backend.import_database('app/api/data/data.json')
 
 
 #db = pymongo.MongoClient("mongodb://db:27017/").example
